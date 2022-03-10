@@ -28,12 +28,12 @@ class PostPagesTest(TestCase):
             slug='group-slag',
         )
         cls.my_image = (
-             b'\x47\x49\x46\x38\x39\x61\x02\x00'
-             b'\x01\x00\x80\x00\x00\x00\x00\x00'
-             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-             b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-             b'\x0A\x00\x3B'
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
         )
         cls.uploaded = SimpleUploadedFile(
             name='my_image.png',
@@ -280,15 +280,15 @@ class CacheTest(TestCase):
 
     def test_cache_index_page(self):
         key = make_template_fragment_key('index_page')
-        response1 = self.guest_client.get(reverse('posts:index'))
+        self.guest_client.get(reverse('posts:index'))
         cache1 = cache.get(key)
         my_post = Post.objects.get(id=self.post.pk)
         my_post.delete()
-        response2 = self.guest_client.get(reverse('posts:index'))
+        self.guest_client.get(reverse('posts:index'))
         cache2 = cache.get(key)
         self.assertEqual(cache1, cache2)
         cache.clear()
-        response3 = self.guest_client.get(reverse('posts:index'))
+        self.guest_client.get(reverse('posts:index'))
         cache3 = cache.get(key)
         self.assertNotEqual(cache2, cache3)
 
@@ -314,7 +314,7 @@ class FollowTest(TestCase):
         другой пользователь не видит чужой подписки, неавторизованный
         не может подписаться."""
         follow_count = Follow.objects.count()
-        following = self.follower_client.get(
+        self.follower_client.get(
             reverse('posts:profile_follow',
                     kwargs={'username': self.author.username})
         )
@@ -332,7 +332,7 @@ class FollowTest(TestCase):
         self.assertEqual(len(follow_index_guest.context['page_obj']),
                          follow_count)
 
-        unfollowing = self.follower_client.get(
+        self.follower_client.get(
             reverse('posts:profile_unfollow',
                     kwargs={'username': self.author.username})
         )
