@@ -134,7 +134,7 @@ def profile_follow(request, username):
     page_obj = pagination(request, posts)
     count = posts.count()
     if author != request.user:
-        follow_user = Follow.objects.get_or_create(
+        Follow.objects.get_or_create(
             user=user,
             author=author
         )

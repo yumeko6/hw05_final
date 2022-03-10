@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.db.models import CharField, UniqueConstraint
+from django.db.models import CharField
 
 from core.models import CreatedModel
 
