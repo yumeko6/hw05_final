@@ -31,7 +31,7 @@ def group_posts(request, slug):
 
 def profile(request, username):
     post_author = get_object_or_404(User, username=username)
-    posts = Post.objects.filter(author=post_author).all()
+    posts = Post.objects.filter(author=post_author).all().order_by('-pub_date')
     page_obj = pagination(request, posts)
     count = posts.count()
     following = is_following(username)
