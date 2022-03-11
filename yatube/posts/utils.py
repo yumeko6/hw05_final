@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 
-from .models import Follow, Post
+from .models import Follow
 
 
 def is_following(username):
