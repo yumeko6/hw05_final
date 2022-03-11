@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from .models import Follow
 
 
-def following_bool(username):
+def is_following(username):
     author = get_object_or_404(User, username=username).pk
     user = Follow.objects.filter(
         author=author).values_list('user_id', flat=True)
