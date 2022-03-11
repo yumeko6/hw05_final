@@ -4,11 +4,11 @@ from django.template.defaultfilters import truncatewords
 
 from .forms import PostForm, CommentForm
 from .models import Post, Group, User, Follow
-from .utils import pagination, following_bool
+from .utils import pagination, is_following
 
 
 def index(request):
-    posts = Post.objects.all().order_by('pub_date')
+    posts = Post.objects.all()
     page_obj = pagination(request, posts)
     context = {
         'page_obj': page_obj,
@@ -19,7 +19,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.filter(group=group).all().order_by('pub_date')
+    posts = Post.objects.filter(group=group).all()
     page_obj = pagination(request, posts)
     context = {
         'group': group,
@@ -31,10 +31,10 @@ def group_posts(request, slug):
 
 def profile(request, username):
     post_author = get_object_or_404(User, username=username)
-    posts = Post.objects.filter(author=post_author).all().order_by('-pub_date')
+    posts = Post.objects.filter(author=post_author).all()
     page_obj = pagination(request, posts)
     count = posts.count()
-    following = following_bool(username)
+    following = is_following(username)
     context = {
         'username': post_author,
         'title': f'Профайл пользователя {post_author}',
@@ -115,9 +115,7 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    authors = Follow.objects.filter(
-        user=request.user).values_list('author_id', flat=True)
-    posts = Post.objects.filter(author_id__in=authors)
+    posts = Post.objects.filter(author__following__user=request.user)
     page_obj = pagination(request, posts)
     context = {
         'page_obj': page_obj,
@@ -138,7 +136,7 @@ def profile_follow(request, username):
             user=user,
             author=author
         )
-    following = following_bool(username)
+    following = is_following(username)
     context = {
         'username': author,
         'page_obj': page_obj,
@@ -157,7 +155,7 @@ def profile_unfollow(request, username):
         user=user,
         author=author
     ).delete()
-    following = following_bool(username)
+    following = is_following(username)
     context = {
         'username': author,
         'follow_user': follow_user,
