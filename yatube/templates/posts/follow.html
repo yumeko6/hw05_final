@@ -3,7 +3,14 @@
   {% include 'posts/includes/switcher.html' %}
   {% for post in page_obj %}
     {% include 'posts/includes/post.html' %}
-    {% if not forloop.last %}<div class="container"> <hr></div>{% endif %}
+    {% if post.group %}
+      <div class="container">
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'posts:group_list' post.group.slug %}">
+          все записи группы
+        </a>
+      </div>
+    {% endif %}
+  {% if not forloop.last %}<div class="container"> <hr></div>{% endif %}
   {% endfor %}
   {% include 'posts/includes/paginator.html' %}
 {% endblock %}
