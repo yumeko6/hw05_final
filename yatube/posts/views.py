@@ -19,7 +19,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.filter(group=group).all()
+    posts = Post.objects.filter(group__slug=slug).select_related('group').all()
     page_obj = pagination(request, posts)
     context = {
         'group': group,
@@ -31,7 +31,8 @@ def group_posts(request, slug):
 
 def profile(request, username):
     post_author = get_object_or_404(User, username=username)
-    posts = Post.objects.filter(author=post_author).all().order_by('-pub_date')
+    posts = Post.objects.filter(
+        author__username=username).select_related('author').all()
     page_obj = pagination(request, posts)
     count = posts.count()
     following = is_following(username)
@@ -47,7 +48,6 @@ def profile(request, username):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    post_author = post.author
     comments = post.comments.all().filter(post_id=post_id)
     form = CommentForm(request.POST or None)
     context = {
@@ -55,7 +55,7 @@ def post_detail(request, post_id):
         'title': f'Пост {truncatewords(post.text, 30)}',
         'form': form,
         'comments': comments,
-        'post_author': post_author,
+        'post_author': post.author,
     }
     return render(request, 'posts/post_detail.html', context)
 
