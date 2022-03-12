@@ -6,8 +6,8 @@ from .models import Follow
 
 
 def is_following(username):
-    author = get_object_or_404(User, username=username).pk
-    following = Follow.objects.filter(author__following=author).exists()
+    author = get_object_or_404(User, username=username).id
+    following = Follow.objects.filter(author=author).exists()
     return following
 
 
