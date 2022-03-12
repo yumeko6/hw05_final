@@ -3,12 +3,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.defaultfilters import truncatewords
 
 from .forms import PostForm, CommentForm
-from .models import Post, Group, User, Follow
+from .models import Post, Group, User, Follow, Comment
 from .utils import pagination, is_following
 
 
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.select_related('author', 'group')
     page_obj = pagination(request, posts)
     context = {
         'page_obj': page_obj,
@@ -19,7 +19,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.filter(group__slug=slug).select_related('group').all()
+    posts = Post.objects.filter(group__slug=slug).select_related('group')
     page_obj = pagination(request, posts)
     context = {
         'group': group,
@@ -32,10 +32,10 @@ def group_posts(request, slug):
 def profile(request, username):
     post_author = get_object_or_404(User, username=username)
     posts = Post.objects.filter(
-        author__username=username).select_related('author').all()
+        author__username=username).select_related('author')
     page_obj = pagination(request, posts)
     count = posts.count()
-    following = is_following(username)
+    following = is_following(post_author)
     context = {
         'username': post_author,
         'title': f'Профайл пользователя {post_author}',

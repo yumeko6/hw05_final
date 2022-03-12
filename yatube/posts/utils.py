@@ -1,12 +1,9 @@
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404
 
 from .models import Follow
 
 
-def is_following(username):
-    author = get_object_or_404(User, username=username).id
+def is_following(author):
     following = Follow.objects.filter(author=author).exists()
     return following
 
